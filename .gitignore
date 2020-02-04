@@ -1,0 +1,9 @@
+# Jetbrains files
+.idea
+# Temporary files
+*~
+.bundle
+logs
+.byebug_history
+# Gem file
+*.gem
