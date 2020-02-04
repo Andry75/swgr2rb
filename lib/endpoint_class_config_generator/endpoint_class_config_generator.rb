@@ -43,6 +43,8 @@ module Swgr2rb
       configs.group_by(&:operation_id)
           .select { |_operation_id, config_arr| config_arr.size > 1 }
           .each do |operation_id, config_arr|
+        puts "Name conflict for operationId '#{operation_id}'. "\
+             "Changing operationId for:#{config_arr.map { |c| "\n\t#{c.endpoint_path}" }.join}"
         common_prefix = common_prefix(config_arr.map(&:endpoint_path))
         config_arr.each do |config|
           uniq_suffix = config.endpoint_path.dup.delete_prefix(common_prefix)

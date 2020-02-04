@@ -2,6 +2,7 @@
 require 'optparse'
 require_relative 'endpoint_class_generator/endpoint_classes_generator'
 require_relative 'scaffold_generator/scaffold_generator'
+require_relative 'scaffold_generator/scaffold_generator_constants'
 
 module Swgr2rb
   class Main
@@ -11,21 +12,25 @@ module Swgr2rb
     end
 
     def execute
-      option_parser = generate_option_parser
-      url = parse_cli_arguments(option_parser)
+      url = parse_cli_arguments(generate_option_parser)
+
       if @params[:from_scratch]
-        @params.merge!(target_dir: 'harness/endpoint_object_models/object_models',
+        @params.merge!(target_dir: File.join(ScaffoldGeneratorConstants::HARNESS_DIR,
+                                             ScaffoldGeneratorConstants::ENDPOINT_MODELS_DIR),
                        update_only: false)
         puts 'Generating scaffold of the testing framework...'
         ScaffoldGenerator.generate_scaffold
       end
+
       puts "Generating endpoint classes in #{@params[:target_dir]}..."
       EndpointClassesGenerator.new(url, @params).generate_endpoint_classes
+
       if @params[:from_scratch]
         puts 'Generating example feature file...'
         ScaffoldGenerator.generate_example_feature_file(@params)
       end
-      puts 'Formatting generated endpoint classes with rubocop...'
+
+      puts 'Formatting generated endpoint object models with rubocop...'
       format_target_dir_with_rubocop
       puts 'Done!'
     end
@@ -34,7 +39,7 @@ module Swgr2rb
 
     def default_params
       {
-          target_dir: 'target',
+          target_dir: ScaffoldGeneratorConstants::ENDPOINT_MODELS_DIR,
           component: 'component1',
           update_only: false,
           rewrite_schemas: true,
@@ -47,18 +52,20 @@ module Swgr2rb
       OptionParser.new do |opts|
         opts.banner = "Usage:\tswgr2rb SWAGGER_URL [OPTIONS]"
         opts.separator('')
-        opts.separator("To generate new project from scratch:\n\t"\
+        opts.separator("To generate a new project from scratch:\n\t"\
                        "swgr2rb SWAGGER_URL --from-scratch [-c COMPONENT]\n"\
-                       "To update existing project:\n\t"\
+                       "To update an existing project:\n\t"\
                        "swgr2rb SWAGGER_URL [-t TARGET_DIR] [-c COMPONENT] [--[no-]update-only] [--[no-]rewrite-schemas] [--[no-]rewrite-classes]")
         opts.separator('')
-        opts.separator('Options description:')
+        opts.separator('Options:')
         opts.on('-t TARGET_DIR', '--target-dir TARGET_DIR', String,
-                "Target directory for endpoint object models. Default: #{@params[:target_dir]}") do |dir|
+                "Target directory for endpoint object models. Default: #{@params[:target_dir]}.") do |dir|
           @params[:target_dir] = dir
         end
         opts.on('-c COMPONENT', '--component COMPONENT', String,
-                "Component name for endpoint classes. Default: #{@params[:component]}") do |component|
+                "Component name for endpoint classes. Default: #{@params[:component]}",
+                'For a new project, a directory named like this will be created inside the target directory,',
+                'and all the generated endpoint object models will be located inside.') do |component|
           @params[:component] = component
         end
         opts.on('--[no-]update-only', TrueClass,
@@ -74,7 +81,8 @@ module Swgr2rb
           @params[:rewrite_classes] = rewrite_classes
         end
         opts.on('--from-scratch', TrueClass,
-                "Generate new project. Must be called from an empty directory. Default: #{@params[:from_scratch]}") do |from_scratch|
+                "Generate new testing framework. Will create a directory named 'harness' and generate",
+                "the scaffold of the framework inside. Default: #{@params[:from_scratch]}") do |from_scratch|
           @params[:from_scratch] = from_scratch
         end
         opts.on('-h', '--help', 'Prints this help') do
@@ -84,21 +92,18 @@ module Swgr2rb
       end
     end
 
-    def parse_url_from_args
-      url = URI.extract(@args[0].to_s)&.first
-      if url.nil?
-        raise ArgumentError, "Swagger URL is required"
-      end
-      url
-    end
-
     def parse_cli_arguments(option_parser)
       begin
         option_parser.parse(@args)
-        url = parse_url_from_args
-      rescue OptionParser::ParseError, ArgumentError => e
-        raise Swgr2rbError, "#{e.message}\nTry 'swgr2rb --help' for more information"
+      rescue OptionParser::ParseError => e
+        raise Swgr2rbError, e.message
       end
+      parse_url_from_args
+    end
+
+    def parse_url_from_args
+      url = URI.extract(@args[0].to_s)&.first
+      raise Swgr2rbError, 'Swagger URL is required' if url.nil?
       url
     end
 

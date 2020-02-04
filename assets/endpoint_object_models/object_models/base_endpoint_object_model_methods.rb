@@ -1,4 +1,3 @@
-require 'humanize'
 require_relative 'base_endpoint_object_model_constants'
 
 module BaseEndpointObjectModelMethods

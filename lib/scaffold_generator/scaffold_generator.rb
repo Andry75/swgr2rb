@@ -1,7 +1,7 @@
 require 'fileutils'
 require_relative 'feature_file_generator'
 require_relative 'scaffold_generator_constants'
-require_relative '../../lib/prototypes/swgr2rb_error'
+require_relative '../prototypes/swgr2rb_error'
 
 module Swgr2rb
   class ScaffoldGenerator

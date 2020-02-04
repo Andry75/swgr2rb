@@ -1,8 +1,8 @@
-require_relative 'file_generator'
+require_relative 'ruby_file_generator'
 require_relative '../prototypes/json_schema_data_types'
 
 module Swgr2rb
-  class EndpointClassGenerator < FileGenerator
+  class EndpointClassGenerator < RubyFileGenerator
     def generate_lines
       [generate_requires,
        generate_class_name,
@@ -19,40 +19,40 @@ module Swgr2rb
     private
 
     def generate_requires
-      FileGeneratorConstants::REQUIRES.call([@opts[:parent_class]] + @opts[:modules_to_include])
+      RubyFileGeneratorConstants::REQUIRES.call([@opts[:parent_class]] + @opts[:modules_to_include])
     end
 
     def generate_class_name
-      FileGeneratorConstants::CLASS_NAME.call(@opts[:name], @opts[:parent_class][:name])
+      RubyFileGeneratorConstants::CLASS_NAME.call(@opts[:name], @opts[:parent_class][:name])
     end
 
     def generate_modules_to_include
-      FileGeneratorConstants::INCLUDES.call(@opts[:modules_to_include])
+      RubyFileGeneratorConstants::INCLUDES.call(@opts[:modules_to_include])
     end
 
     def generate_initialize_method
-      FileGeneratorConstants::INITIALIZE.call(generate_endpoint_path,
-                                              @config.request_type)
+      RubyFileGeneratorConstants::INITIALIZE.call(generate_endpoint_path,
+                                                  @config.request_type)
     end
 
     def generate_validate_response_schema_method
-      FileGeneratorConstants::VALIDATE_RESPONSE_SCHEMA.call(generate_schema_validation)
+      RubyFileGeneratorConstants::VALIDATE_RESPONSE_SCHEMA.call(generate_schema_validation)
     end
 
     def generate_end_point_path_method
       unknown_params = path_params[:snake_case] + query_params[:snake_case]
       param_loading = generate_endpoint_path_param_loading(unknown_params)
-      FileGeneratorConstants::END_POINT_PATH.call(unknown_params,
-                                                  param_loading)
+      RubyFileGeneratorConstants::END_POINT_PATH.call(unknown_params,
+                                                      param_loading)
           .compact.flatten
     end
 
     def generate_generate_headers_method
-      FileGeneratorConstants::GENERATE_HEADERS.call(@config.request_type)
+      RubyFileGeneratorConstants::GENERATE_HEADERS.call(@config.request_type)
     end
 
     def generate_generate_body_method
-      FileGeneratorConstants::GENERATE_BODY.call(generate_request_body(@config.request_params))
+      RubyFileGeneratorConstants::GENERATE_BODY.call(generate_request_body(@config.request_params))
     end
 
     def generate_endpoint_path
@@ -65,7 +65,12 @@ module Swgr2rb
         path << '?' << query_params[:camel_case].zip(query_params[:snake_case])
                            .map { |cc, sc| "#{cc}=\#{#{sc}}" }.join('&')
       end
-      "proc { |#{(path_params[:snake_case] + query_params[:snake_case]).sort.join(", ")}| \"#{path}\" }"
+      proc_params = path_params[:snake_case] + query_params[:snake_case]
+      if proc_params.empty?
+        "proc { '#{path}' }"
+      else
+        "proc { |#{proc_params.sort.join(", ")}| \"#{path}\" }"
+      end
     end
 
     def path_params
@@ -78,21 +83,21 @@ module Swgr2rb
 
     def generate_params(params)
       camel_case_params = params.map { |hsh| hsh[:name] }
-      snake_case_params = camel_case_params.map { |s| FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(s) }
+      snake_case_params = camel_case_params.map { |s| RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(s) }
       { camel_case: camel_case_params, snake_case: snake_case_params }
     end
 
     def generate_schema_validation
-      FileGeneratorConstants::JSON_VALIDATOR_VALIDATE_SCHEMA if @config.expected_response.schema.present?
+      RubyFileGeneratorConstants::JSON_VALIDATOR_VALIDATE_SCHEMA if @config.expected_response.schema.present?
     end
 
     def generate_endpoint_path_param_loading(params)
       if params.present?
         lines = params.map do |param|
-          FileGeneratorConstants::GET_PARAM_FROM_REQUEST_OPTIONS.call(param)
+          RubyFileGeneratorConstants::GET_PARAM_FROM_REQUEST_OPTIONS.call(param)
         end
-        lines << FileGeneratorConstants::COMMENT_ADD_SUB_RESULTS
-        lines << FileGeneratorConstants::RAISE_UNLESS_PARAMS_PASSED.call(params, @config.endpoint_path)
+        lines << RubyFileGeneratorConstants::COMMENT_ADD_SUB_RESULTS
+        lines << RubyFileGeneratorConstants::RAISE_UNLESS_PARAMS_PASSED.call(params, @config.endpoint_path)
         lines.flatten
       end
     end
@@ -100,13 +105,13 @@ module Swgr2rb
     def generate_request_body(params)
       case params
       in { body: [{ schema: } => param, *] }
-        [FileGeneratorConstants::COMMENT_SET_VALID_VALUES,
+        [RubyFileGeneratorConstants::COMMENT_SET_VALID_VALUES,
          "tmp = #{generate_default_request_body(schema)}",
-         FileGeneratorConstants::COMMENT_ADD_SUB_RESULTS,
+         RubyFileGeneratorConstants::COMMENT_ADD_SUB_RESULTS,
          generate_request_body_set_params(param),
          'tmp.to_json'].flatten
       in { form_data: [Hash, *] }
-        FileGeneratorConstants::MULTIPART_REQUEST_BODY
+        RubyFileGeneratorConstants::MULTIPART_REQUEST_BODY
       else
         'nil'
       end
@@ -127,17 +132,17 @@ module Swgr2rb
     def generate_request_body_set_params(params)
       case params
       in { schema: Class | Boolean => schema, name: }
-        "tmp = #{FileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, schema)}"
+        "tmp = #{RubyFileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, schema)}"
       in { schema: [Hash => item, *] }
         item.map do |name, type|
-          "tmp.first[:#{name}] = #{FileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, type)}"
+          "tmp.first[:#{name}] = #{RubyFileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, type)}"
         end
       in { schema: [type], name: }
-        ["tmp = #{FileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, type)}",
+        ["tmp = #{RubyFileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, type)}",
          'tmp = tmp.split(/,\s*/)']
       in { schema: Hash => schema }
         schema.map do |name, type|
-          "tmp[:#{name}] = #{FileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, type)}"
+          "tmp[:#{name}] = #{RubyFileGeneratorConstants::GET_PARAM_FROM_REQUEST_PARAMS.call(name, type)}"
         end
       end
     end

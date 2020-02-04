@@ -71,7 +71,7 @@ module Swgr2rb
     def handle_response
       case @response
       when String
-        @code = (@response.match /(HTTP Status|HTTP\/2) \d{3}/).to_s.split(' ')[-1].to_i
+        @code = (@response.match(/(HTTP Status|HTTP\/2) \d{3}/)).to_s.split(' ')[-1].to_i
         content_type = if @response.match?(/content-type: (.*);/)
                          @response.match(/content-type: (.*);/)[1]
                        else

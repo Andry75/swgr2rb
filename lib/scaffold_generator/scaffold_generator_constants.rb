@@ -1,5 +1,6 @@
 module Swgr2rb
   module ScaffoldGeneratorConstants
+    ENDPOINT_MODELS_DIR = 'endpoint_object_models/object_models'.freeze
     FEATURE_FILE_NAME = 'ff001_example.feature'.freeze
     FEATURES_DIR = 'features/component'.freeze
     HARNESS_DIR = 'harness'.freeze

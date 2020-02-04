@@ -1,7 +1,7 @@
 require_relative '../prototypes/json_schema_data_types'
 
 module Swgr2rb
-  module FileGeneratorConstants
+  module RubyFileGeneratorConstants
     REQUIRES = proc do |required|
       required.map { |hsh| "require_relative '#{hsh[:path].sub(/\.rb$/, '')}'" }.join("\n") + "\n"
     end

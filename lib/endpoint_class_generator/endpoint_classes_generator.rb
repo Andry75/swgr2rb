@@ -62,14 +62,14 @@ module Swgr2rb
       {
           name: "#{class_name}Schema",
           path: File.join('object_model_schemas',
-                          FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call("#{class_name}Schema") + '.rb')
+                          RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call("#{class_name}Schema") + '.rb')
       }
     end
 
     def generate_config_hash_for_validator(class_name)
       module_name = "#{class_name}Validator"
       module_path = File.join('object_model_validators',
-                              FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(module_name) + '.rb')
+                              RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(module_name) + '.rb')
       if File.exist?(File.join(@params[:target_dir], module_path))
         { name: module_name, path: module_path }
       end
@@ -78,7 +78,7 @@ module Swgr2rb
     def generate_config_hash_for_base_class(name)
       {
           name: name,
-          path: File.join('..', FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(name))
+          path: File.join('..', RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(name))
       }
     end
   end

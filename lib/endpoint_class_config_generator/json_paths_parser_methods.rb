@@ -41,11 +41,11 @@ module Swgr2rb
     private
 
     def generate_expected_response_code(request_hash)
-      request_hash[:responses].keys.first.to_s.to_i
+      request_hash[:responses].keys.map(&:to_s).select { |k| k.match?(/^2/) }.last.to_i
     end
 
     def generate_expected_response_schema(request_hash)
-      successful_response = request_hash[:responses].find { |code, _response| code.to_s.start_with?('2') }[1]
+      successful_response = request_hash[:responses].select { |code, _response| code.to_s.match?(/^2/) }.to_a.last[1]
       case successful_response
       in { schema: { type: 'array', items: } }
         get_response_item_schema(items)

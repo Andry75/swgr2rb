@@ -1,8 +1,9 @@
-require_relative 'file_generator_constants'
+require 'fileutils'
+require_relative 'ruby_file_generator_constants'
 
 module Swgr2rb
-  class FileGenerator
-    include FileGeneratorConstants
+  class RubyFileGenerator
+    include RubyFileGeneratorConstants
 
     # opts can include:
     #   name: class/module name
@@ -27,16 +28,16 @@ module Swgr2rb
     private
 
     def filename
-      create_target_dir(@opts[:target_dir]) unless @filename
-      @filename ||= File.join(@opts[:target_dir],
-                              "#{FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(@opts[:name])}.rb")
+      unless @filename
+        create_target_dir(@opts[:target_dir])
+        @filename = File.join(@opts[:target_dir],
+                              "#{RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(@opts[:name])}.rb")
+      end
+      @filename
     end
 
     def create_target_dir(dir_str)
-      path_arr = dir_str.split('/')
-      (0...path_arr.size).to_a.each do |i|
-        Dir.mkdir(File.join(path_arr[0..i])) unless Dir.exist?(File.join(path_arr[0..i]))
-      end
+      FileUtils.mkdir_p(dir_str) unless Dir.exist?(dir_str)
     end
   end
 end
