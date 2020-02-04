@@ -46,7 +46,7 @@ module Swgr2rb
                                generate_config_hash_for_validator(endpoint_class_name)].compact,
           parent_class: config_for_base_class,
           update_only: @params[:update_only],
-          rewrite: @params[:rewrite_classes]
+          rewrite: false
       }
     end
 

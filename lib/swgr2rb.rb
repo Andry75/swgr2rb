@@ -43,7 +43,6 @@ module Swgr2rb
           component: 'component1',
           update_only: false,
           rewrite_schemas: true,
-          rewrite_classes: false,
           from_scratch: false
       }
     end
@@ -52,37 +51,43 @@ module Swgr2rb
       OptionParser.new do |opts|
         opts.banner = "Usage:\tswgr2rb SWAGGER_URL [OPTIONS]"
         opts.separator('')
-        opts.separator("To generate a new project from scratch:\n\t"\
-                       "swgr2rb SWAGGER_URL --from-scratch [-c COMPONENT]\n"\
-                       "To update an existing project:\n\t"\
-                       "swgr2rb SWAGGER_URL [-t TARGET_DIR] [-c COMPONENT] [--[no-]update-only] [--[no-]rewrite-schemas] [--[no-]rewrite-classes]")
+        opts.separator("To generate a new testing framework from scratch:\n\t"\
+                       "swgr2rb SWAGGER_URL --from-scratch [-c COMPONENT]\n\n"\
+                       "To update an existing testing framework:\n\t"\
+                       "swgr2rb SWAGGER_URL [-t TARGET_DIR] [-c COMPONENT]\n\t"\
+                       "     [--[no-]update-only] [--[no-]rewrite-schemas]")
         opts.separator('')
         opts.separator('Options:')
         opts.on('-t TARGET_DIR', '--target-dir TARGET_DIR', String,
-                "Target directory for endpoint object models. Default: #{@params[:target_dir]}.") do |dir|
+                "Target directory for endpoint object models",
+                "(the directory that contains components' folders).",
+                "Default: #{@params[:target_dir]}.") do |dir|
           @params[:target_dir] = dir
         end
         opts.on('-c COMPONENT', '--component COMPONENT', String,
-                "Component name for endpoint classes. Default: #{@params[:component]}",
-                'For a new project, a directory named like this will be created inside the target directory,',
-                'and all the generated endpoint object models will be located inside.') do |component|
+                'Component name for endpoint classes. For a new',
+                'project, a directory named like this will be created',
+                'inside the target directory, and all the generated',
+                'endpoint object models will be located inside.',
+                "Default: #{@params[:component]}.",) do |component|
           @params[:component] = component
         end
         opts.on('--[no-]update-only', TrueClass,
-                "Do not create new files, only update existing. Default: #{@params[:update_only]}") do |update_only|
+                "Do not create new files, only update existing. This",
+                "option is useful when there are new (previously",
+                "untested) endpoints in Swagger. Default: #{@params[:update_only]}.") do |update_only|
           @params[:update_only] = update_only
         end
         opts.on('--[no-]rewrite-schemas', TrueClass,
-                "Rewrite schema modules if they already exist. Default: #{@params[:rewrite_schemas]}") do |rewrite_schemas|
+                "Rewrite schema modules (located in",
+                "TARGET_DIR/COMPONENT/object_model_schemas)",
+                "if they already exist. Default: #{@params[:rewrite_schemas]}.") do |rewrite_schemas|
           @params[:rewrite_schemas] = rewrite_schemas
         end
-        opts.on('--[no-]rewrite-classes', TrueClass,
-                "Rewrite endpoint classes if they already exist. Default: #{@params[:rewrite_classes]}") do |rewrite_classes|
-          @params[:rewrite_classes] = rewrite_classes
-        end
         opts.on('--from-scratch', TrueClass,
-                "Generate new testing framework. Will create a directory named 'harness' and generate",
-                "the scaffold of the framework inside. Default: #{@params[:from_scratch]}") do |from_scratch|
+                "Generate new testing framework. Will create",
+                "a directory named 'harness' and generate the scaffold",
+                "of the framework inside. Default: #{@params[:from_scratch]}.") do |from_scratch|
           @params[:from_scratch] = from_scratch
         end
         opts.on('-h', '--help', 'Prints this help') do

@@ -10,9 +10,12 @@ The harness service includes tests and endpoint object models. The service's pri
 │   ├── config_loaders
 │   ├── json_validator
 │   ├── object_models
+|   |   └── %component_name%
+|   |       └── object_model_schemas
 │   └── prototypes
 ├── features
 │   ├── component
+|   |   └── %component_name%
 │   ├── step_definitions
 │   └── support
 └── request_sender
@@ -23,9 +26,12 @@ The `configs` folder contains service's configuration files.
 
 The `endpoint_object_models` folder contains all things related to the endpoint models such as the `JSON validator`
 component, the `Config loader` component, and prototypes like `JSON schema data types` and `Request object`.
+The endpoint models themselves are located in `object_models/%component_name%`.
+The modules that contain expected JSON schemas for schema validation testing are located in
+`object_models/%component_name%/object_model_schemas`.
 
-The `features` folder contains the Cucumber tests which are readable.
-All tests are located in the subfolder `component`.
+The `features` folder contains the Cucumber tests.
+All tests are located in `component/%component_name%`.
 
 The `request_sender` folder includes the `conductor_sender`, which is used for sending requests to the application.
 

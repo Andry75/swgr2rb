@@ -17,10 +17,10 @@ module Swgr2rb
       params = EndpointClassConfig::RequestParams.new([], [], [], [])
       request_properties[:parameters].select { |hsh| hsh[:required] }.each do |param_hash|
         param_schema = case param_hash
-        in { schema: }
-          parse_field_properties(schema)
-        in { type: }
-          field_type_to_ruby_class(type)
+                       in { schema: }
+                         parse_field_properties(schema)
+                       in { type: }
+                         field_type_to_ruby_class(type)
                        end
         params.send(param_hash[:in] == 'formData' ? :form_data : param_hash[:in].to_sym) << {
             name: param_hash[:name],
