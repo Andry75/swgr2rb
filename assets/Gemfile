@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'activesupport'
+gem 'cucumber', '~> 3.1', '>= 3.1.2'
+gem 'httparty'
+gem 'humanize', '~> 2.1', '>= 2.1.1'

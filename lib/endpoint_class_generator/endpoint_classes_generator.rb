@@ -81,14 +81,5 @@ module Swgr2rb
           path: File.join('..', FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(name))
       }
     end
-
-    #TODO write Base...Class/Methods if not exists!
-
-    #TODO delete?
-    #def get_file_path_relative_to_endpoint_class(class_name, endpoint_class_folder)
-    #  filename = File.join('**', "#{FileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(class_name)}.rb")
-    #  file_path = Dir.glob(filename).first
-    #  "#{'../' * endpoint_class_folder.split('/').size}#{file_path}"
-    #end
   end
 end
