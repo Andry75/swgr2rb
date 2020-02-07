@@ -59,7 +59,9 @@ module Swgr2rb
       if strings.size < 2
         strings.first
       else
-        common_prefix(strings.each_slice(2).map { |str1, str2| common_prefix_for_two_strings(str1, str2) })
+        common_prefix(strings.each_slice(2).map do |str1, str2|
+          str2.nil? ? str1 : common_prefix_for_two_strings(str1, str2)
+        end)
       end
     end
 
