@@ -6,7 +6,9 @@ module Swgr2rb
       required.map { |hsh| "require_relative '#{hsh[:path].sub(/\.rb$/, '')}'" }.join("\n") + "\n"
     end
 
-    CLASS_NAME = proc { |class_name, parent_class_name| "class #{class_name} < #{parent_class_name}" }
+    CLASS_NAME = proc do |class_name, parent_class_name|
+      "class #{class_name}#{parent_class_name ? " < #{parent_class_name}" : ''}"
+    end
     MODULE_NAME = proc { |module_name| "module #{module_name}" }
 
     INCLUDES = proc do |modules|

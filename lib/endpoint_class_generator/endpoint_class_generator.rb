@@ -1,3 +1,5 @@
+require 'active_support'
+require 'active_support/core_ext'
 require_relative 'ruby_file_generator'
 require_relative '../prototypes/json_schema_data_types'
 
@@ -19,15 +21,15 @@ module Swgr2rb
     private
 
     def generate_requires
-      RubyFileGeneratorConstants::REQUIRES.call([@opts[:parent_class]] + @opts[:modules_to_include])
+      RubyFileGeneratorConstants::REQUIRES.call([@opts[:parent_class]].compact + @opts[:modules_to_include].to_a)
     end
 
     def generate_class_name
-      RubyFileGeneratorConstants::CLASS_NAME.call(@opts[:name], @opts[:parent_class][:name])
+      RubyFileGeneratorConstants::CLASS_NAME.call(@opts[:name], @opts[:parent_class]&.fetch(:name))
     end
 
     def generate_modules_to_include
-      RubyFileGeneratorConstants::INCLUDES.call(@opts[:modules_to_include])
+      RubyFileGeneratorConstants::INCLUDES.call(@opts[:modules_to_include].to_a)
     end
 
     def generate_initialize_method
