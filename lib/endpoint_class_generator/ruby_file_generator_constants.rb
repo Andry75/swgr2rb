@@ -39,10 +39,7 @@ module Swgr2rb
     GENERATE_HEADERS = proc do |request_type|
       if request_type == 'multipart_post'
         ['def generate_headers',
-         '  {',
-         "    'Content-Type': 'multipart/form-data',",
-         "    'authorization': \"Bearer \#{access_token}\"",
-         '  }',
+         "  { 'Content-Type': 'multipart/form-data' }",
          'end']
       end
     end
