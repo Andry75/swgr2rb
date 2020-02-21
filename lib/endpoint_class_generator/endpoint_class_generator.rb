@@ -150,9 +150,7 @@ module Swgr2rb
     end
 
     def default_value_for_type(type)
-      if type.is_a?(Array)
-        "[#{default_value_for_type(type.first)}]"
-      elsif type == String
+      if type == String
         "'string'"
       elsif type == Integer
         '0'
