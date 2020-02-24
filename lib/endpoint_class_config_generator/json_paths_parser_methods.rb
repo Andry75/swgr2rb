@@ -2,7 +2,7 @@ module Swgr2rb
   module JsonPathsParserMethods
     def generate_request_type(request_type, request_properties)
       if request_properties[:parameters].find { |param| param[:in] == 'formData' && param[:type] == 'file' }
-        'multipart_post'
+        :multipart_post
       else
         request_type
       end

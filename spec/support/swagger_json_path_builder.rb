@@ -16,12 +16,14 @@ class SwaggerJsonPathBuilder
     @json
   end
 
-  def build_parameter(name, where, schema)
+  # opts can include:
+  #   optional: whether or not param is optional
+  def build_parameter(name, where, schema, opts = {})
     validate_parameter_where_arg(where)
     param = {
       name: name.to_s,
       in: where.to_s,
-      required: true
+      required: opts[:optional] ? false : true
     }.merge(generate_parameter_schema(schema))
     @json.values.first[:parameters] << param
     self
@@ -48,11 +50,15 @@ class SwaggerJsonPathBuilder
   end
 
   def generate_parameter_schema(schema)
-    sch = generate_schema(schema)
-    if sch[:type].is_a?(Class) || sch[:type].is_a?(Module)
-      sch
+    if schema == :file
+      { type: 'file' }
     else
-      { schema: sch }
+      sch = generate_schema(schema)
+      if sch[:type].is_a?(Class) || sch[:type].is_a?(Module)
+        sch
+      else
+        { schema: sch }
+      end
     end
   end
 

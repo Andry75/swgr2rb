@@ -45,6 +45,8 @@ class SwaggerJsonDefinitionBuilder
   def class_to_json_string(class_obj)
     if class_obj == Float
       'number'
+    elsif class_obj == Hash
+      'object'
     else
       class_obj.to_s.sub(/^Swgr2rb::/, '').downcase
     end
