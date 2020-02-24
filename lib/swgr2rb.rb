@@ -49,12 +49,12 @@ module Swgr2rb
 
     def generate_option_parser
       OptionParser.new do |opts|
-        opts.banner = "Usage:\tswgr2rb SWAGGER_URL [OPTIONS]"
+        opts.banner = "Usage:\tswgr2rb SWAGGER_URL|FILE_PATH [OPTIONS]"
         opts.separator('')
         opts.separator("To generate a new testing framework from scratch:\n\t"\
-                       "swgr2rb SWAGGER_URL --from-scratch [-c COMPONENT]\n\n"\
+                       "swgr2rb SWAGGER_URL|FILE_PATH --from-scratch [-c COMPONENT]\n\n"\
                        "To update an existing testing framework:\n\t"\
-                       "swgr2rb SWAGGER_URL [-t TARGET_DIR] [-c COMPONENT]\n\t"\
+                       "swgr2rb SWAGGER_URL|FILE_PATH [-t TARGET_DIR] [-c COMPONENT]\n\t"\
                        "     [--[no-]update-only] [--[no-]rewrite-schemas]")
         opts.separator('')
         opts.separator('Options:')
@@ -103,13 +103,25 @@ module Swgr2rb
       rescue OptionParser::ParseError => e
         raise Swgr2rbError, e.message
       end
-      parse_url_from_args
+      parse_swagger_path_from_args
     end
 
-    def parse_url_from_args
-      url = URI.extract(@args[0].to_s)&.first
-      raise Swgr2rbError, 'Swagger URL is required' if url.nil?
-      url
+    def parse_swagger_path_from_args
+      path = @args[0]
+      if path.nil? || !(is_url?(path) || is_json_file_path?(path))
+        raise Swgr2rbError,
+              "Provided Swagger URL/file path '#{path}' is neither "\
+              'a URL nor a path of an existing JSON file'
+      end
+      path.to_s
+    end
+
+    def is_url?(path)
+      URI.extract(path).present?
+    end
+
+    def is_json_file_path?(path)
+      path.end_with?('.json') && File.exist?(path)
     end
 
     def format_target_dir_with_rubocop
