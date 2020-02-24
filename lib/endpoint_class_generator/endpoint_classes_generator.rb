@@ -25,7 +25,7 @@ module Swgr2rb
     private
 
     def generate_class_name(operation_id)
-      operation_id.sub('_', '').split(/([[:upper:]][[:lower:]]+)/).select(&:present?).map(&:capitalize).join
+      operation_id.gsub('_', '').split(/([[:upper:]][[:lower:]]+)/).select(&:present?).map(&:capitalize).join
     end
 
     def generate_schema_module_opts(endpoint_class_name)
@@ -42,8 +42,7 @@ module Swgr2rb
           target_dir: File.join(@params[:target_dir], @params[:component]),
           name: endpoint_class_name,
           modules_to_include: [config_for_base_methods,
-                               generate_config_hash_for_schema(endpoint_class_name),
-                               generate_config_hash_for_validator(endpoint_class_name)].compact,
+                               generate_config_hash_for_schema(endpoint_class_name)].compact,
           parent_class: config_for_base_class,
           update_only: @params[:update_only],
           rewrite: false
@@ -62,17 +61,8 @@ module Swgr2rb
       {
           name: "#{class_name}Schema",
           path: File.join('object_model_schemas',
-                          RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call("#{class_name}Schema") + '.rb')
+                          RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call("#{class_name}Schema"))
       }
-    end
-
-    def generate_config_hash_for_validator(class_name)
-      module_name = "#{class_name}Validator"
-      module_path = File.join('object_model_validators',
-                              RubyFileGeneratorConstants::CAMEL_CASE_TO_SNAKE_CASE.call(module_name) + '.rb')
-      if File.exist?(File.join(@params[:target_dir], module_path))
-        { name: module_name, path: module_path }
-      end
     end
 
     def generate_config_hash_for_base_class(name)
