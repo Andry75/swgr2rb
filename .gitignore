@@ -7,5 +7,5 @@ logs
 .byebug_history
 # Gem file
 *.gem
-# Tests coverage
+# Test coverage
 coverage
