@@ -37,7 +37,7 @@ module Swgr2rb
     end
 
     GENERATE_HEADERS = proc do |request_type|
-      if request_type == 'multipart_post'
+      if request_type == :multipart_post
         ['def generate_headers',
          "  { 'Content-Type': 'multipart/form-data' }",
          'end']

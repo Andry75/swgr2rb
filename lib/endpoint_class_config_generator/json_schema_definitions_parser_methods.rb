@@ -14,8 +14,6 @@ module Swgr2rb
 
     def parse_schema_definition(hash, name = '')
       case hash
-      in { type: 'array', items: }
-        [parse_single_field(items, [name])]
       in { type: 'object', properties: }
         properties.map do |field_name, field_properties|
           { field_name.to_sym => parse_field_properties(field_properties, [name, field_name.to_sym]) }

@@ -163,7 +163,7 @@ RSpec.describe Swgr2rb::EndpointClassGenerator, :endpoint_class_generator do
 
   context 'when generating generate_headers method' do
     it 'skips generate_headers when content type is application/json' do
-      %w[get post put delete].each do |request_type|
+      %i[get post put delete].each do |request_type|
         config = generate_endpoint_config(request_type: request_type)
         lines = Swgr2rb::EndpointClassGenerator.new(config, {}).generate_lines
         expect(lines.join("\n")).not_to match(code_lines_regexp('generate_headers'))
@@ -171,7 +171,7 @@ RSpec.describe Swgr2rb::EndpointClassGenerator, :endpoint_class_generator do
     end
 
     it 'generates generate_headers when content type is multipart/form-data' do
-      config = generate_endpoint_config(request_type: 'multipart_post')
+      config = generate_endpoint_config(request_type: :multipart_post)
       lines = Swgr2rb::EndpointClassGenerator.new(config, {}).generate_lines
       expected_method = ['def generate_headers',
                          "  { 'Content-Type': 'multipart/form-data' }",
@@ -277,7 +277,7 @@ RSpec.describe Swgr2rb::EndpointClassGenerator, :endpoint_class_generator do
     end
 
     it 'works correctly for a multipart request' do
-      config = generate_endpoint_config(request_type: 'multipart_post',
+      config = generate_endpoint_config(request_type: :multipart_post,
                                         request_params: { form_data: [{ name: 'file', schema: 'file' }] })
 
       lines = Swgr2rb::EndpointClassGenerator.new(config, {}).generate_lines
