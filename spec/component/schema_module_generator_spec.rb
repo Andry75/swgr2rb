@@ -85,4 +85,3 @@ RSpec.describe Swgr2rb::SchemaModuleGenerator, :endpoint_class_generator do
     end
   end
 end
-
