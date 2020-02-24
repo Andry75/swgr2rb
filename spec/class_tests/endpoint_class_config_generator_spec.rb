@@ -50,9 +50,9 @@ RSpec.describe Swgr2rb::EndpointClassConfigGenerator, :endpoint_class_config_gen
       id_first_path = first_path[:"api/first"].first["get"][:"operationId"]
       second_path = {
         'api/second': [SwaggerJsonPathBuilder.new('get')
-                                              .set_operation_id(id_first_path)
-                                              .build_response(201, String)
-                                              .json]
+                                             .set_operation_id(id_first_path)
+                                             .build_response(201, String)
+                                             .json]
       }
 
       stub_swagger_json(build_default_json({}, first_path.merge(second_path)))
