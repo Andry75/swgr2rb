@@ -4,6 +4,5 @@ require 'swgr2rb'
 begin
   Swgr2rb::Main.new(ARGV).execute
 rescue Swgr2rb::Swgr2rbError => e
-  puts e.message
-  exit
+  abort(e.message)
 end
