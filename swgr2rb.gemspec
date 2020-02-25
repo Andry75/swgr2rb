@@ -16,4 +16,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'httparty', '~> 0.17', '>= 0.17.0'
   s.add_runtime_dependency 'rubocop', '~> 0.78', '>= 0.78.0'
   s.add_development_dependency 'rspec', '~> 3.9'
+  s.add_development_dependency 'simplecov', '~> 0.18.1'
 end
