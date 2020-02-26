@@ -1,0 +1,28 @@
+require_relative '../base_endpoint_object_model'
+require_relative '../base_endpoint_object_model_methods'
+require_relative 'object_model_schemas/get_all_records_schema'
+
+class GetAllRecords < BaseEndpointObjectModel
+  include BaseEndpointObjectModelMethods
+  include GetAllRecordsSchema
+
+  def initialize
+    @end_point_path = proc { 'api/records' }
+    @supportable_request_types = %w[get]
+  end
+
+  def validate_response_schema
+    validate_response_code
+    JsonValidator.validate(expected_schema, response.body)
+  end
+
+  private
+
+  def end_point_path
+    @end_point_path.call
+  end
+
+  def generate_body
+    nil
+  end
+end

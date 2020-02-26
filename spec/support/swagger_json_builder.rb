@@ -24,7 +24,10 @@ class SwaggerJsonBuilder
 
   # paths: hash like { 'endpoint/path': [<json built with SwaggerJsonPathBuilder>] }
   def build_paths(paths)
-    @json[:paths].merge!(paths.transform_values { |json_arr| json_arr.reduce(&:merge) })
+    paths.each do |path, requests|
+      @json[:paths][path] ||= {}
+      @json[:paths][path].merge!(requests.reduce(&:merge))
+    end
     self
   end
 

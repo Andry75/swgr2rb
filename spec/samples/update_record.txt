@@ -1,0 +1,35 @@
+require_relative '../base_endpoint_object_model'
+require_relative '../base_endpoint_object_model_methods'
+require_relative 'object_model_schemas/update_record_schema'
+
+class UpdateRecord < BaseEndpointObjectModel
+  include BaseEndpointObjectModelMethods
+  include UpdateRecordSchema
+
+  def initialize
+    @end_point_path = proc { |record_id, status| "api/v1/records/#{record_id}?status=#{status}" }
+    @supportable_request_types = %w[put]
+  end
+
+  def validate_response_schema
+    validate_response_code
+  end
+
+  private
+
+  def end_point_path
+    record_id = request_options[:params]['record_id'] if request_options[:params] && request_options[:params]['record_id']
+    status = request_options[:params]['status'] if request_options[:params] && request_options[:params]['status']
+    # TODO: Consider adding ability to load params from request_options[:sub_results]
+    unless record_id && status
+      raise "Harness error\n"\
+            'The api/v{version}/records/{recordId} '\
+            'requires record_id, status parameters'
+    end
+    @end_point_path.call(record_id, status)
+  end
+
+  def generate_body
+    nil
+  end
+end

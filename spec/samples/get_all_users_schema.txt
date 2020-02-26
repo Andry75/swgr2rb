@@ -1,0 +1,19 @@
+module GetAllUsersSchema
+  def expected_code
+    200
+  end
+
+  def expected_schema
+    {
+      items: [
+        {
+          fullName: String,
+          email: String,
+          passwordHash: String,
+          status: Boolean
+        }
+      ],
+      total: Integer
+    }
+  end
+end

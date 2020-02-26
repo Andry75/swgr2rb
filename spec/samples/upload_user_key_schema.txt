@@ -1,0 +1,9 @@
+module UploadUserKeySchema
+  def expected_code
+    200
+  end
+
+  def expected_schema
+    Boolean
+  end
+end

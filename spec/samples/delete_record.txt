@@ -1,0 +1,35 @@
+require_relative '../base_endpoint_object_model'
+require_relative '../base_endpoint_object_model_methods'
+require_relative 'object_model_schemas/delete_record_schema'
+
+class DeleteRecord < BaseEndpointObjectModel
+  include BaseEndpointObjectModelMethods
+  include DeleteRecordSchema
+
+  def initialize
+    @end_point_path = proc { |parent_record_id, record_id| "api/records/#{parent_record_id}/#{record_id}" }
+    @supportable_request_types = %w[delete]
+  end
+
+  def validate_response_schema
+    validate_response_code
+  end
+
+  private
+
+  def end_point_path
+    parent_record_id = request_options[:params]['parent_record_id'] if request_options[:params] && request_options[:params]['parent_record_id']
+    record_id = request_options[:params]['record_id'] if request_options[:params] && request_options[:params]['record_id']
+    # TODO: Consider adding ability to load params from request_options[:sub_results]
+    unless parent_record_id && record_id
+      raise "Harness error\n"\
+            'The api/records/{parentRecordId}/{recordId} '\
+            'requires parent_record_id, record_id parameters'
+    end
+    @end_point_path.call(parent_record_id, record_id)
+  end
+
+  def generate_body
+    nil
+  end
+end

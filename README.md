@@ -16,8 +16,10 @@ $ gem install swgr2rb
 
 Swgr2rb can be used in two ways: to generate a new testing framework, or to update an existing one.
 
-In both cases, `swgr2rb` has one required argument – the URL
-of Swagger – and a number of options. To read more about the options, view help:
+In both cases, `swgr2rb` has one required argument and a number of options.
+The required argument must be either a URL of Swagger (e.g. `localhost:8080/swagger`)
+or a path to the JSON file returned by Swagger (e.g. `docs/swagger.json`).
+To read more about the options, view help:
 
 ```shell script
 $ swgr2rb --help
@@ -28,7 +30,7 @@ $ swgr2rb --help
 Swgr2rb can generate a scaffold of a testing framework:
 
 ```shell script
-$ swgr2rb <swagger_url> --from-scratch
+$ swgr2rb <swagger_url|json_file_path> --from-scratch
 ```
 
 A directory named `harness` will be created, and the scaffold will be generated inside.
@@ -44,7 +46,7 @@ More about the generated testing framework's structure can be read in [its READM
 Swgr2rb can be used to update the endpoint object models of an existing testing framework:
 
 ```shell script
-$ swgr2rb <swagger_url> -c <component_name>
+$ swgr2rb <swagger_url|json_file_path> -c <component_name>
 ```
 
 The tool will update the endpoint object model schema modules (located in

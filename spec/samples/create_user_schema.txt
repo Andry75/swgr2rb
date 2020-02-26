@@ -1,0 +1,5 @@
+module CreateUserSchema
+  def expected_code
+    201
+  end
+end

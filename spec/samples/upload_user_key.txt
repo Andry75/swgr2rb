@@ -1,0 +1,42 @@
+require_relative '../base_endpoint_object_model'
+require_relative '../base_endpoint_object_model_methods'
+require_relative 'object_model_schemas/upload_user_key_schema'
+
+class UploadUserKey < BaseEndpointObjectModel
+  include BaseEndpointObjectModelMethods
+  include UploadUserKeySchema
+
+  def initialize
+    @end_point_path = proc { |user_id| "api/users/#{user_id}/key" }
+    @supportable_request_types = %w[multipart_post]
+  end
+
+  def validate_response_schema
+    validate_response_code
+    JsonValidator.validate(expected_schema, response.body)
+  end
+
+  private
+
+  def end_point_path
+    user_id = request_options[:params]['user_id'] if request_options[:params] && request_options[:params]['user_id']
+    # TODO: Consider adding ability to load params from request_options[:sub_results]
+    unless user_id
+      raise "Harness error\n"\
+            'The api/users/{userId}/key '\
+            'requires user_id parameter'
+    end
+    @end_point_path.call(user_id)
+  end
+
+  def generate_headers
+    { 'Content-Type': 'multipart/form-data' }
+  end
+
+  def generate_body
+    # TODO: Add valid default file path
+    file_path = 'misc/default_file_path'
+    file_path = request_options[:params]['file_path'] if request_options[:params] && request_options[:params]['file_path']
+    { filePath: file_path }
+  end
+end

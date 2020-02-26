@@ -1,0 +1,21 @@
+module GetAllRecordsSchema
+  def expected_code
+    200
+  end
+
+  def expected_schema
+    {
+      name: String,
+      randomFloat: Float,
+      randomObject: Hash,
+      comments: [
+        {
+          title: String,
+          arrayOfInts: [
+            Integer
+          ]
+        }
+      ]
+    }
+  end
+end

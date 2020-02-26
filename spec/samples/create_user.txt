@@ -1,0 +1,39 @@
+require_relative '../base_endpoint_object_model'
+require_relative '../base_endpoint_object_model_methods'
+require_relative 'object_model_schemas/create_user_schema'
+
+class CreateUser < BaseEndpointObjectModel
+  include BaseEndpointObjectModelMethods
+  include CreateUserSchema
+
+  def initialize
+    @end_point_path = proc { 'api/users' }
+    @supportable_request_types = %w[post]
+  end
+
+  def validate_response_schema
+    validate_response_code
+  end
+
+  private
+
+  def end_point_path
+    @end_point_path.call
+  end
+
+  def generate_body
+    # TODO: Set meaningful default values in tmp
+    tmp = {
+      fullName: 'string',
+      email: 'string',
+      passwordHash: 'string',
+      status: false
+    }
+    # TODO: Consider adding ability to load params from request_options[:sub_results]
+    tmp[:fullName] = request_options[:params]['full_name'] if request_options[:params] && request_options[:params]['full_name']
+    tmp[:email] = request_options[:params]['email'] if request_options[:params] && request_options[:params]['email']
+    tmp[:passwordHash] = request_options[:params]['password_hash'] if request_options[:params] && request_options[:params]['password_hash']
+    tmp[:status] = request_options[:params]['status'] if request_options[:params]&.key?('status')
+    tmp.to_json
+  end
+end

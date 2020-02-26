@@ -1,0 +1,5 @@
+module DeleteRecordSchema
+  def expected_code
+    200
+  end
+end

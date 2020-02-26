@@ -5,6 +5,7 @@
 .bundle
 logs
 .byebug_history
+tmp
 # Gem file
 *.gem
 # Test coverage

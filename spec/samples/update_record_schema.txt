@@ -1,0 +1,5 @@
+module UpdateRecordSchema
+  def expected_code
+    204
+  end
+end
