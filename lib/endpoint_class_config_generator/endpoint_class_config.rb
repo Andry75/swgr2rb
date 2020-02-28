@@ -1,9 +1,16 @@
+# frozen_string_literal: true
+
 module Swgr2rb
+  # EndpointClassConfig is a class that contains all
+  # necessary parameters for endpoint model generation
+  # as its attributes.
   class EndpointClassConfig
-    attr_reader :endpoint_path, :request_type, :expected_response, :request_params, :version
+    attr_reader :endpoint_path, :request_type, :expected_response,
+                :request_params, :version
     attr_accessor :operation_id
 
-    def initialize(endpoint_path, request_type, expected_response, request_params, operation_id, version)
+    def initialize(endpoint_path, request_type, expected_response,
+                   request_params, operation_id, version)
       @endpoint_path = endpoint_path
       @request_type = request_type
       @expected_response = expected_response

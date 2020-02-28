@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require_relative '../support/endpoint_class_generator_helper'
@@ -8,16 +10,16 @@ RSpec.describe Swgr2rb::EndpointClassGenerator, :endpoint_class_generator do
       config = generate_endpoint_config(endpoint_path: 'api/v{version}/first',
                                         version: 1)
       lines = Swgr2rb::EndpointClassGenerator.new(config, {}).generate_lines
-      expect(lines.join("\n")).to match(/^\s*@end_point_path = proc { 'api\/v1\/first' }$/)
+      expect(lines.join("\n")).to match(%r{^\s*@end_point_path = proc { 'api/v1/first' }$})
 
       config = generate_endpoint_config(endpoint_path: 'api/v{version}/first',
                                         version: 2)
       lines = Swgr2rb::EndpointClassGenerator.new(config, {}).generate_lines
-      expect(lines.join("\n")).to match(/^\s*@end_point_path = proc { 'api\/v2\/first' }$/)
+      expect(lines.join("\n")).to match(%r{^\s*@end_point_path = proc { 'api/v2/first' }$})
 
       config = generate_endpoint_config(endpoint_path: 'api/endpoint/without/version')
       lines = Swgr2rb::EndpointClassGenerator.new(config, {}).generate_lines
-      expect(lines.join("\n")).to match(/^\s*@end_point_path = proc { 'api\/endpoint\/without\/version' }$/)
+      expect(lines.join("\n")).to match(%r{^\s*@end_point_path = proc { 'api/endpoint/without/version' }$})
     end
 
     it 'works with one path parameter correctly' do
@@ -264,7 +266,7 @@ RSpec.describe Swgr2rb::EndpointClassGenerator, :endpoint_class_generator do
                          '  # TODO: Set meaningful default values in tmp',
                          '  tmp = [',
                          '    {',
-                         "      status: false,",
+                         '      status: false,',
                          '      randomFloat: 0.0',
                          '    }',
                          '  ]',

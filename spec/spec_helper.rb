@@ -1,5 +1,8 @@
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter 'vendor'
+  add_filter { |file| !file.project_filename.match?(%r{[^\/]*/lib/}) }
+end
 require_relative 'support/endpoint_class_generator_helper'
 require_relative 'support/endpoint_classes_generator_helper'
 require_relative 'support/endpoint_class_config_generator_helper'

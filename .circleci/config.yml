@@ -1,15 +1,61 @@
 version: 2.1
-orbs:
-  ruby: circleci/ruby@0.1.2 
 
 jobs:
-  build:
+  dependencies:
     docker:
-      - image: circleci/ruby:2.6.3-stretch-node
-    executor: default
+      - image: 313794256585.dkr.ecr.eu-central-1.amazonaws.com/polytech/circleci/linters:latest
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "Gemfile.lock" }}
+            - dependencies-
       - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
+          name: Install dependencies
+          command: make deps
+      - save_cache:
+          key: dependencies-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+  lint:
+    docker:
+      - image: 313794256585.dkr.ecr.eu-central-1.amazonaws.com/polytech/circleci/linters:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Configure bundler
+          command: make deps
+      - run:
+          name: Run linter
+          command: make lint
+  test:
+    docker:
+      - image: 313794256585.dkr.ecr.eu-central-1.amazonaws.com/polytech/circleci/linters:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Configure bundler
+          command: make deps
+      - run:
+          name: Run tests
+          command: make test
+
+workflows:
+  version: 2
+  run-linters-and-tests:
+    jobs:
+      - dependencies
+      - lint:
+          requires:
+            - dependencies
+      - test:
+          requires:
+            - dependencies

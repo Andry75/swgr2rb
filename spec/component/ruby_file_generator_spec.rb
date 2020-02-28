@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require 'fileutils'
@@ -32,7 +34,7 @@ RSpec.describe Swgr2rb::RubyFileGenerator do
       ruby_file_generator.new({ name: 'TestRubyFileGenerator',
                                 target_dir: 'tmp',
                                 update_only: true })
-          .generate_file
+                         .generate_file
       expect(File.exist?('tmp/test_ruby_file_generator.rb')).to be(false)
     end
 
@@ -44,7 +46,7 @@ RSpec.describe Swgr2rb::RubyFileGenerator do
                                 target_dir: 'tmp',
                                 rewrite: false },
                               'New Content!')
-          .generate_file
+                         .generate_file
       expect(File.read(filename)).to eq(file_content)
     end
 
@@ -58,7 +60,7 @@ RSpec.describe Swgr2rb::RubyFileGenerator do
                                 target_dir: 'tmp',
                                 rewrite: true },
                               new_content)
-          .generate_file
+                         .generate_file
       expect(File.read(filename)).to eq(new_content)
     end
 
@@ -68,7 +70,7 @@ RSpec.describe Swgr2rb::RubyFileGenerator do
                                 target_dir: target_dir,
                                 update_only: false },
                               "class TestRubyFileGenerator\nend")
-          .generate_file
+                         .generate_file
       expect(File.exist?(target_dir) && File.directory?(target_dir)).to be(true)
     end
   end

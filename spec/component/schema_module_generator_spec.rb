@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require_relative '../support/endpoint_class_generator_helper'

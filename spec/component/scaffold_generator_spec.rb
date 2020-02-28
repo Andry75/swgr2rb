@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require 'fileutils'
@@ -13,8 +15,8 @@ RSpec.describe Swgr2rb::ScaffoldGenerator do
         Swgr2rb::ScaffoldGenerator.generate_scaffold
       end
       generated_files = Dir.glob(File.join(target_dir, 'harness/**/*'))
-                           .map { |filename| filename.sub(/^#{target_dir}\/harness\//, '') }
-      source_files = Dir.glob('assets/**/*').map { |filename| filename.sub(/^assets\//, '') }
+                           .map { |filename| filename.sub(%r{^#{target_dir}/harness/}, '') }
+      source_files = Dir.glob('assets/**/*').map { |filename| filename.sub(%r{^assets/}, '') }
       expect(generated_files).to eq(source_files)
     end
 
@@ -24,8 +26,8 @@ RSpec.describe Swgr2rb::ScaffoldGenerator do
         Swgr2rb::ScaffoldGenerator.generate_scaffold
       end
       generated_files = Dir.glob(File.join(target_dir, 'harness/**/*'))
-                           .map { |filename| filename.sub(/^#{target_dir}\/harness\//, '') }
-      source_files = Dir.glob('assets/**/*').map { |filename| filename.sub(/^assets\//, '') }
+                           .map { |filename| filename.sub(%r{^#{target_dir}/harness/}, '') }
+      source_files = Dir.glob('assets/**/*').map { |filename| filename.sub(%r{^assets/}, '') }
       expect(generated_files).to eq(source_files)
     end
 

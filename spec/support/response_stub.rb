@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ResponseStub < Object
   attr_reader :response, :body, :headers
 
@@ -15,7 +17,7 @@ class ResponseStub < Object
     response[:http_version]
   end
 
-  def set_body(body)
+  def build_body(body)
     @body = body
   end
 

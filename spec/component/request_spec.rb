@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
-require 'pry'
 require_relative '../support/headers_stub'
-
 
 RSpec.describe Swgr2rb::Request, :endpoint_class_config_generator do
   context 'create_request' do

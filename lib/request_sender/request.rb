@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 module Swgr2rb
+  # Request contains all parameters necessary for making an API request.
+  # Its instances are being passed to ConductorSender.send_request.
   class Request
     attr_reader :type, :headers, :body, :subdomain, :endpoint_name
 
@@ -17,9 +21,7 @@ module Swgr2rb
     private
 
     def process_request_type
-      if type.split(' ').length > 1
-        @type = type.split(' ').join('_')
-      end
+      @type = type.split(' ').join('_') if type.split(' ').length > 1
     end
 
     def generate_url

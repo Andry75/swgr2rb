@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'active_support'
 require 'active_support/core_ext'
@@ -7,12 +9,15 @@ require_relative 'endpoint_class_config'
 require_relative 'json_paths_parser_methods'
 
 module Swgr2rb
+  # EndpointClassConfigGenerator parses Swagger JSON, extracts
+  # all parameters necessary for endpoint models generation,
+  # and generates an array of EndpointClassConfig instances.
   class EndpointClassConfigGenerator
     include JsonSchemaDefinitionsParserMethods
     include JsonPathsParserMethods
 
-    def initialize(swagger_endpoint_path)
-      @json = fetch_swagger_json(swagger_endpoint_path)
+    def initialize(swagger_path)
+      @json = fetch_swagger_json(swagger_path)
       @schema_definitions = {}
     end
 
@@ -20,12 +25,9 @@ module Swgr2rb
       generate_response_schema_definitions
       configs = @json[:paths].map do |request_path, request_hash|
         request_hash.map do |request_type, request_properties|
-          EndpointClassConfig.new(request_path.to_s,
-                                  generate_request_type(request_type, request_properties),
-                                  generate_expected_response(request_properties),
-                                  generate_request_params(request_properties),
-                                  generate_operation_id(request_properties),
-                                  generate_version)
+          generate_endpoint_config(request_path,
+                                   request_type,
+                                   request_properties)
         end
       end.flatten
       generate_uniq_identifiers(configs)
@@ -35,24 +37,38 @@ module Swgr2rb
     private
 
     def fetch_swagger_json(swagger_endpoint_path)
-      JSON.parse(SwaggerJsonFetcher.get_swagger_json(swagger_endpoint_path).to_json,
+      JSON.parse(SwaggerJsonFetcher.get_swagger_json(swagger_endpoint_path)
+                                   .to_json,
                  symbolize_names: true)
+    end
+
+    def generate_endpoint_config(request_path, request_type, request_properties)
+      EndpointClassConfig.new(request_path.to_s,
+                              generate_request_type(request_type,
+                                                    request_properties),
+                              generate_expected_response(request_properties),
+                              generate_request_params(request_properties),
+                              generate_operation_id(request_properties),
+                              generate_version)
     end
 
     def generate_uniq_identifiers(configs)
       configs.group_by(&:operation_id)
-          .select { |_operation_id, config_arr| config_arr.size > 1 }
-          .each do |operation_id, config_arr|
+             .select { |_operation_id, config_arr| config_arr.size > 1 }
+             .each do |operation_id, config_arr|
         puts "Name conflict for operationId '#{operation_id}'. "\
-             "Changing operationId for:#{config_arr.map { |c| "\n\t#{c.endpoint_path}" }.join}"
+             'Changing operationId for:'\
+             "#{config_arr.map { |c| "\n\t#{c.endpoint_path}" }.join}"
         common_prefix = common_prefix(config_arr.map(&:endpoint_path))
-        config_arr.each do |config|
-          uniq_suffix = config.endpoint_path.dup.delete_prefix(common_prefix)
-                            .gsub(/[{}]/, '').split('/').select(&:present?)
-                            .map { |substr| substr[0].upcase + substr[1..] }.join
-          config.operation_id = operation_id + uniq_suffix
-        end
+        config_arr.each { |config| update_operation_id(config, common_prefix) }
       end
+    end
+
+    def update_operation_id(config, common_prefix)
+      uniq_suffix = config.endpoint_path.dup.delete_prefix(common_prefix)
+                          .gsub(/[{}]/, '').split('/').select(&:present?)
+                          .map { |substr| substr[0].upcase + substr[1..] }.join
+      config.operation_id = config.operation_id + uniq_suffix
     end
 
     def common_prefix(strings)
@@ -66,7 +82,8 @@ module Swgr2rb
     end
 
     def common_prefix_for_two_strings(str1, str2)
-      arr1, arr2 = str1.split('/'), str2.split('/')
+      arr1 = str1.split('/')
+      arr2 = str2.split('/')
       differ_at = (1...arr1.size).to_a.find { |i| arr1[i] != arr2[i] }
       arr1[0...differ_at].join('/')
     end

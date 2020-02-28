@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require 'fileutils'
@@ -16,7 +18,7 @@ RSpec.describe Swgr2rb::EndpointClassesGenerator, :endpoint_classes_generator do
                  rewrite_schemas: false }
 
       Swgr2rb::EndpointClassesGenerator.new('', params)
-          .generate_endpoint_classes
+                                       .generate_endpoint_classes
 
       expect(schema_generator_class)
         .to have_received(:new)
@@ -57,7 +59,7 @@ RSpec.describe Swgr2rb::EndpointClassesGenerator, :endpoint_classes_generator do
                rewrite_schemas: false }
 
     Swgr2rb::EndpointClassesGenerator.new('', params)
-        .generate_endpoint_classes
+                                     .generate_endpoint_classes
 
     expect(schema_generator_class)
       .to have_received(:new)
@@ -95,7 +97,7 @@ RSpec.describe Swgr2rb::EndpointClassesGenerator, :endpoint_classes_generator do
                rewrite_schemas: true }
 
     Swgr2rb::EndpointClassesGenerator.new('', params)
-        .generate_endpoint_classes
+                                     .generate_endpoint_classes
 
     expect(schema_generator_class)
       .to have_received(:new)
@@ -133,7 +135,7 @@ RSpec.describe Swgr2rb::EndpointClassesGenerator, :endpoint_classes_generator do
                rewrite_schemas: true }
 
     Swgr2rb::EndpointClassesGenerator.new('', params)
-        .generate_endpoint_classes
+                                     .generate_endpoint_classes
 
     expect(schema_generator_class)
       .to have_received(:new)

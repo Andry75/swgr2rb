@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 require_relative 'scaffold_generator_constants'
 
 module Swgr2rb
+  # FeatureFileGenerator generates an example feature file that uses
+  # scaffold's base steps to make a request to one of the endpoints
+  # described by generated endpoint object models.
   class FeatureFileGenerator
     def initialize(params)
       @params = params
@@ -26,8 +31,7 @@ module Swgr2rb
       [generate_tags,
        generate_feature_name,
        generate_scenario_name,
-       generate_steps
-      ].flatten.compact
+       generate_steps].flatten.compact
     end
 
     def generate_tags
@@ -47,9 +51,12 @@ module Swgr2rb
     end
 
     def example_endpoint
-      @endpoint ||= Dir[File.join(@params[:target_dir], @params[:component], '*.rb')].sort.first
-                        .split('/').last.sub('.rb', '')
-                        .split('_').map(&:capitalize).join(' ')
+      all_endpoints = Dir.glob(File.join(@params[:target_dir],
+                                         @params[:component],
+                                         '*.rb'))
+      @example_endpoint ||= all_endpoints.min
+                                         .split('/').last.sub('.rb', '')
+                                         .split('_').map(&:capitalize).join(' ')
     end
   end
 end

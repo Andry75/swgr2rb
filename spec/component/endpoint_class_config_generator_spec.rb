@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require_relative '../support/swagger_json_builder'
@@ -338,13 +340,13 @@ RSpec.describe Swgr2rb::EndpointClassConfigGenerator, :endpoint_class_config_gen
         SwaggerJsonPathBuilder.new('get')
                               .build_parameter('userId', :path, Integer)
                               .build_response(200, String)
-                              .set_operation_id('GetRequest_OperationId')
+                              .build_operation_id('GetRequest_OperationId')
                               .json
       ]
     }
     stub_swagger_json(SwaggerJsonBuilder.new
                           .build_paths(paths)
-                          .set_version('2.0')
+                          .build_version('2.0')
                           .json)
 
     configs = config_generator.generate_configs
@@ -358,8 +360,8 @@ RSpec.describe Swgr2rb::EndpointClassConfigGenerator, :endpoint_class_config_gen
   context 'when generate_configs is called' do
     it 'generates with correct data' do
       definitions = {
-          FirstModel: { name: String, number: Integer },
-          SecondModel: { name: String, address: String }
+        FirstModel: { name: String, number: Integer },
+        SecondModel: { name: String, address: String }
       }
       stub_swagger_json(build_default_json(definitions, {}))
 
@@ -371,14 +373,14 @@ RSpec.describe Swgr2rb::EndpointClassConfigGenerator, :endpoint_class_config_gen
 
     it 'generates with correct data and path' do
       definitions = {
-          FirstModel: { name: String, number: Integer },
-          SecondModel: { name: String, address: String }
+        FirstModel: { name: String, number: Integer },
+        SecondModel: { name: String, address: String }
       }
 
       path = {
-          'api/first': [SwaggerJsonPathBuilder.new('get')
-                            .build_response(200, [Integer])
-                            .json]
+        'api/first': [SwaggerJsonPathBuilder.new('get')
+                                            .build_response(200, [Integer])
+                                            .json]
       }
       stub_swagger_json(build_default_json(definitions, path))
 
@@ -391,25 +393,25 @@ RSpec.describe Swgr2rb::EndpointClassConfigGenerator, :endpoint_class_config_gen
 
     it 'generates with correct data, path and not uniq id' do
       first_path = {
-          'api/first': [SwaggerJsonPathBuilder.new('get')
-                            .build_response(200, [Integer])
-                            .json]
+        'api/first': [SwaggerJsonPathBuilder.new('get')
+                                            .build_response(200, [Integer])
+                                            .json]
       }
 
-      id_first_path = first_path[:"api/first"].first["get"][:"operationId"]
+      id_first_path = first_path[:"api/first"].first['get'][:operationId]
       second_path = {
-          'api/second': [SwaggerJsonPathBuilder.new('get')
-                             .set_operation_id(id_first_path)
-                             .build_response(201, String)
-                             .json]
+        'api/second': [SwaggerJsonPathBuilder.new('get')
+                                             .build_operation_id(id_first_path)
+                                             .build_response(201, String)
+                                             .json]
       }
 
       stub_swagger_json(build_default_json({}, first_path.merge(second_path)))
       configs_not_uniq = config_generator.generate_configs
 
       expect(configs_not_uniq.first.operation_id).not_to eq(configs_not_uniq.second.operation_id)
-      expect(configs_not_uniq.first.operation_id).to eq(id_first_path + "First")
-      expect(configs_not_uniq.second.operation_id).to eq(id_first_path + "Second")
+      expect(configs_not_uniq.first.operation_id).to eq(id_first_path + 'First')
+      expect(configs_not_uniq.second.operation_id).to eq(id_first_path + 'Second')
       expect(configs_not_uniq.first.expected_response.code).to eq(200)
       expect(configs_not_uniq.second.expected_response.code).to eq(201)
     end

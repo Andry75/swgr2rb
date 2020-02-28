@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class SwaggerJsonPathBuilder
   def initialize(request_type)
     @json = {
       request_type => {
-        operationId: "#{request_type.capitalize}_#{Time.now.strftime("%S%6N")}",
+        operationId: "#{request_type.capitalize}_#{Time.now.strftime('%S%6N')}",
         parameters: [],
         responses: {}
       }
@@ -13,6 +15,7 @@ class SwaggerJsonPathBuilder
     if @json.values.first[:responses].empty?
       raise "Invalid json built: 'responses' must not be empty"
     end
+
     @json
   end
 
@@ -35,7 +38,7 @@ class SwaggerJsonPathBuilder
     self
   end
 
-  def set_operation_id(operation_id)
+  def build_operation_id(operation_id)
     @json.values.first[:operationId] = operation_id.to_s
     self
   end
@@ -44,9 +47,9 @@ class SwaggerJsonPathBuilder
 
   def validate_parameter_where_arg(where)
     valid_where = %w[path query body formData]
-    unless valid_where.include?(where.to_s)
-      raise "Invalid argument passed to SwaggerJsonPathBuilder: 'where' argument must be one of #{valid_where}"
-    end
+    return if valid_where.include?(where.to_s)
+
+    raise "Invalid argument passed to SwaggerJsonPathBuilder: 'where' argument must be one of #{valid_where}"
   end
 
   def generate_parameter_schema(schema)
@@ -78,11 +81,11 @@ class SwaggerJsonPathBuilder
     when Symbol
       { '$ref': "#/definitions/#{schema}" }
     else
-      raise "Invalid argument passed to SwaggerJsonPathBuilder: "\
+      raise 'Invalid argument passed to SwaggerJsonPathBuilder: '\
             "'schema' argument must be:\n"\
             "1) a Class/Module (e.g. String, Swgr2rb::Boolean)\n"\
             "2) an array (e.g. [Integer])\n"\
-            "3) a Symbol if it is a reference to a definition (e.g. :FirstModel)"
+            '3) a Symbol if it is a reference to a definition (e.g. :FirstModel)'
     end
   end
 

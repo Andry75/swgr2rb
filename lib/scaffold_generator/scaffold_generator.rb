@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require 'fileutils'
 require_relative 'feature_file_generator'
 require_relative 'scaffold_generator_constants'
 require_relative '../prototypes/swgr2rb_error'
 
 module Swgr2rb
+  # ScaffoldGenerator generates a scaffold of a testing framework.
   class ScaffoldGenerator
     include ScaffoldGeneratorConstants
 
@@ -23,7 +26,8 @@ module Swgr2rb
       def create_harness_dir
         if Dir.exist?(ScaffoldGeneratorConstants::HARNESS_DIR)
           unless Dir.empty?(ScaffoldGeneratorConstants::HARNESS_DIR)
-            raise Swgr2rbError, 'harness directory already exists and is not empty'
+            raise Swgr2rbError,
+                  'harness directory already exists and is not empty'
           end
         else
           Dir.mkdir(ScaffoldGeneratorConstants::HARNESS_DIR)
@@ -31,7 +35,9 @@ module Swgr2rb
       end
 
       def copy_scaffold
-        FileUtils.cp_r(File.join(File.dirname(__FILE__), ScaffoldGeneratorConstants::PATH_TO_ASSETS, '.'),
+        FileUtils.cp_r(File.join(File.dirname(__FILE__),
+                                 ScaffoldGeneratorConstants::PATH_TO_ASSETS,
+                                 '.'),
                        ScaffoldGeneratorConstants::HARNESS_DIR)
       end
 

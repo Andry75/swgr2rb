@@ -4,6 +4,8 @@ require_relative 'ruby_file_generator'
 require_relative '../prototypes/json_schema_data_types'
 
 module Swgr2rb
+  # EndpointClassGenerator generates a Ruby class file
+  # for an endpoint object model from its config.
   class EndpointClassGenerator < RubyFileGenerator
     def generate_lines
       [generate_requires,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'swagger_json_definition_builder'
 
 class SwaggerJsonBuilder
@@ -31,7 +33,7 @@ class SwaggerJsonBuilder
     self
   end
 
-  def set_version(version)
+  def build_version(version)
     @json[:info][:version] = version.to_s
     self
   end

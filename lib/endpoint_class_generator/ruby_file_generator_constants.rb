@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../prototypes/json_schema_data_types'
 
 module Swgr2rb
@@ -24,7 +26,7 @@ module Swgr2rb
 
     VALIDATE_RESPONSE_SCHEMA = proc do |schema_validation|
       ['def validate_response_schema',
-       "  validate_response_code",
+       '  validate_response_code',
        schema_validation,
        'end'].compact.flatten
     end
@@ -46,14 +48,14 @@ module Swgr2rb
 
     GENERATE_BODY = proc do |body|
       ['def generate_body',
-       (body ? body : 'nil'),
+       (body || 'nil'),
        'end'].flatten
     end
 
     GET_PARAM_FROM_REQUEST_OPTIONS = proc do |param|
       "#{param} = request_options[:params]['#{param}'] if request_options[:params] && request_options[:params]['#{param}']"
     end
-    COMMENT_ADD_SUB_RESULTS = '# TODO: Consider adding ability to load params from request_options[:sub_results]'.freeze
+    COMMENT_ADD_SUB_RESULTS = '# TODO: Consider adding ability to load params from request_options[:sub_results]'
     RAISE_UNLESS_PARAMS_PASSED = proc do |params, endpoint_path|
       ["unless #{params.join(' && ')}",
        '  raise "Harness error\n"\\',
@@ -62,14 +64,13 @@ module Swgr2rb
        'end']
     end
 
-    JSON_VALIDATOR_VALIDATE_SCHEMA = 'JsonValidator.validate(expected_schema, response.body)'.freeze
+    JSON_VALIDATOR_VALIDATE_SCHEMA = 'JsonValidator.validate(expected_schema, response.body)'
 
-    COMMENT_SET_VALID_VALUES = '# TODO: Set meaningful default values in tmp'.freeze
+    COMMENT_SET_VALID_VALUES = '# TODO: Set meaningful default values in tmp'
     GET_PARAM_FROM_REQUEST_PARAMS = proc do |name, type|
       name = CAMEL_CASE_TO_SNAKE_CASE.call(name)
-      line = "request_options[:params]['#{name}'] if request_options[:params]"
-      line << (type == Boolean ? "&.key?('#{name}')" : " && request_options[:params]['#{name}']")
-      line
+      "request_options[:params]['#{name}'] if request_options[:params]"\
+      "#{(type == Boolean ? "&.key?('#{name}')" : " && request_options[:params]['#{name}']")}"
     end
     MULTIPART_REQUEST_BODY = ['# TODO: Add valid default file path',
                               "file_path = 'misc/default_file_path'",
@@ -92,10 +93,10 @@ module Swgr2rb
 
     CAMEL_CASE_TO_SNAKE_CASE = proc do |str|
       str.to_s.split(/([[:upper:]][[:lower:]]+)/)
-          .select(&:present?)
-          .map(&:downcase)
-          .join('_')
-          .gsub(/_+/, '_')
+         .select(&:present?)
+         .map(&:downcase)
+         .join('_')
+         .gsub(/_+/, '_')
     end
 
     SNAKE_CASE_TO_CAMEL_CASE = proc do |str|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HeadersStub < Object
   attr_reader :content_type
 

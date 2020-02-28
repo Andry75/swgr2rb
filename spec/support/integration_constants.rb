@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swgr2rb'
 
 module IntegrationConstants
@@ -8,7 +10,7 @@ module IntegrationConstants
                                          .new('post')
                                          .build_parameter('userModel', :body, :UserModel)
                                          .build_response(201, nil)
-                                         .set_operation_id('CreateUser')
+                                         .build_operation_id('CreateUser')
                                          .json])
     end,
     get_all_users: proc do |builder|
@@ -17,7 +19,7 @@ module IntegrationConstants
              .build_paths('api/users': [SwaggerJsonPathBuilder
                                          .new('get')
                                          .build_response(200, :PaginatedUserModel)
-                                         .set_operation_id('GetAllUsers')
+                                         .build_operation_id('GetAllUsers')
                                          .json])
     end,
     upload_user_key: proc do |builder|
@@ -26,19 +28,19 @@ module IntegrationConstants
                                                        .build_parameter('userId', :path, Integer)
                                                        .build_parameter('key', :formData, :file)
                                                        .build_response(200, Swgr2rb::Boolean)
-                                                       .set_operation_id('UploadUserKey')
+                                                       .build_operation_id('UploadUserKey')
                                                        .json])
     end,
     update_record: proc do |builder|
       path = 'api/v{version}/records/{recordId}'
-      builder.set_version('1.0')
+      builder.build_version('1.0')
              .build_paths(path.to_sym => [SwaggerJsonPathBuilder
                                             .new('put')
                                             .build_parameter('version', :path, String)
                                             .build_parameter('recordId', :path, Integer)
                                             .build_parameter('status', :query, Swgr2rb::Boolean)
                                             .build_response(204, nil)
-                                            .set_operation_id('UpdateRecord')
+                                            .build_operation_id('UpdateRecord')
                                             .json])
     end,
     delete_record: proc do |builder|
@@ -48,7 +50,7 @@ module IntegrationConstants
                                             .build_parameter('parentRecordId', :path, Integer)
                                             .build_parameter('recordId', :path, Integer)
                                             .build_response(200, nil)
-                                            .set_operation_id('DeleteRecord')
+                                            .build_operation_id('DeleteRecord')
                                             .json])
     end,
     get_all_records: proc do |builder|
@@ -57,7 +59,7 @@ module IntegrationConstants
              .build_paths('api/records': [SwaggerJsonPathBuilder
                                             .new('get')
                                             .build_response(200, [:RecordModel])
-                                            .set_operation_id('GetAllRecords')
+                                            .build_operation_id('GetAllRecords')
                                             .json])
     end
   }.freeze

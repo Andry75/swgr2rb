@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swgr2rb'
 require 'json'
 require_relative 'integration_constants'
@@ -39,14 +41,14 @@ module IntegrationHelper
 
   def all_filenames_recursive(directory_name)
     Dir.glob("#{directory_name}/**/*")
-       .map { |filename| filename.sub(/^#{Regexp.escape(directory_name)}\//, '') }
+       .map { |filename| filename.sub(%r{^#{Regexp.escape(directory_name)}/}, '') }
   end
 
   def generated_endpoint_files(endpoints, component)
-    endpoints.map { |endpoint|
+    endpoints.map do |endpoint|
       [IntegrationConstants::EXPECTED_ENDPOINT_FILENAME.call(endpoint, component),
        IntegrationConstants::EXPECTED_SCHEMA_FILENAME.call(endpoint, component)]
-    }.reduce(:+)
+    end.reduce(:+)
   end
 
   def generated_endpoint_filepath(relative_path)
@@ -57,7 +59,7 @@ module IntegrationHelper
     File.join('spec', 'samples', relative_path.split('/').last.sub('.rb', '.txt'))
   end
 
-  def suppress_stdout(&block)
+  def suppress_stdout
     real_stdout = $stdout
     stub_stdout = StringIO.new
     begin

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EndpointClassConfigGeneratorHelper
   def build_default_json(definitions, paths)
     SwaggerJsonBuilder.new

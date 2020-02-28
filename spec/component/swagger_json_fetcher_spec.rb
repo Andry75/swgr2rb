@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'swgr2rb'
 require 'fileutils'
@@ -10,13 +12,13 @@ RSpec.describe Swgr2rb::SwaggerJsonFetcher do
       request_obj = Swgr2rb::Request.new(swagger_url, 'get', nil, nil)
 
       request_class = class_spy(Swgr2rb::Request)
-                        .as_stubbed_const(transfer_nested_constants: true)
+                      .as_stubbed_const(transfer_nested_constants: true)
       allow(request_class)
         .to receive(:new)
         .and_return(request_obj)
 
       conductor_sender_class = class_spy(Swgr2rb::ConductorSender)
-                                 .as_stubbed_const(transfer_nested_constants: true)
+                               .as_stubbed_const(transfer_nested_constants: true)
       allow(conductor_sender_class)
         .to receive(:send_request)
         .and_return(Swgr2rb::Response.new('{"fake":"response"}'))

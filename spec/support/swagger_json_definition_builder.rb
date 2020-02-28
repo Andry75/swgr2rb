@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SwaggerJsonDefinitionBuilder
   def initialize
     @json = {
@@ -10,6 +12,7 @@ class SwaggerJsonDefinitionBuilder
     if @json[:properties].empty?
       raise "Invalid definition built: 'properties' must not be empty"
     end
+
     @json
   end
 
@@ -34,11 +37,11 @@ class SwaggerJsonDefinitionBuilder
     when Symbol
       { '$ref': "#/definitions/#{type}" }
     else
-      raise "Invalid argument passed to SwaggerJsonDefinitionBuilder: "\
+      raise 'Invalid argument passed to SwaggerJsonDefinitionBuilder: '\
             "schema hash values can be:\n"\
             "1) a Class/Module (e.g. String, Swgr2rb::Boolean)\n"\
             "2) an array (e.g. [Integer])\n"\
-            "3) a Symbol if it is a reference to a definition (e.g. :FirstModel)"
+            '3) a Symbol if it is a reference to a definition (e.g. :FirstModel)'
     end
   end
 

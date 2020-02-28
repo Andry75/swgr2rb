@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EndpointClassConfigHelper
   def generate_endpoint_config(opts = {})
     Swgr2rb::EndpointClassConfig.new(opts[:endpoint_path] || 'api/default/endpoint/path',
