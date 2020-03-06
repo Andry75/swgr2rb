@@ -47,10 +47,18 @@ jobs:
       - run:
           name: Run tests
           command: make test
+  publish:
+    docker:
+      - image: 313794256585.dkr.ecr.eu-central-1.amazonaws.com/polytech/circleci/linters:latest
+    steps:
+      - checkout
+      - run:
+          name: Publish gem to RubyGems.org
+          command: make publish
 
 workflows:
   version: 2
-  run-linters-and-tests:
+  lint-test-and-publish:
     jobs:
       - dependencies
       - lint:
@@ -59,3 +67,10 @@ workflows:
       - test:
           requires:
             - dependencies
+      - publish:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              only: master
